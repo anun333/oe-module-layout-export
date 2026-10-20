@@ -86,8 +86,8 @@ $kinds = [
     Report::CHANGED => xl('Different'),
     Report::MISSING_COLUMN => xl('A column this site lacks'),
     Report::MISSING_LIST => xl('A list the fields use that neither has'),
-    Report::COLUMN_ONLY_IN_A => $withB ? xl('A table column only the first file\'s OpenEMR has') : xl('A table column only the file\'s OpenEMR has'),
-    Report::COLUMN_ONLY_IN_B => $withB ? xl('A table column only the second file\'s OpenEMR has') : xl('A table column only this OpenEMR has'),
+    Report::COLUMN_ONLY_IN_A => $withB ? xl('A table column only the OpenEMR of the first file has') : xl('A table column only the OpenEMR of the file has'),
+    Report::COLUMN_ONLY_IN_B => $withB ? xl('A table column only the OpenEMR of the second file has') : xl('A table column only this OpenEMR has'),
     Report::UNKNOWN_TYPE => xl('A field type this OpenEMR does not know'),
 ];
 $token = OpenEmr::csrfToken();
@@ -128,7 +128,7 @@ $base = OpenEmr::webRoot() . Bootstrap::MODULE_INSTALLATION_PATH . '/public/';
             <?php } ?>
             </tbody>
         </table>
-        <p class="small text-muted"><?php echo $withB ? xlt('For a changed value: the first file\'s, then the second\'s.') : xlt('For a changed value: the file\'s, then this site\'s.'); ?></p>
+        <p class="small text-muted"><?php echo $withB ? xlt('For a changed value: the value in the first file, then in the second.') : xlt('For a changed value: the value in the file, then on this site.'); ?></p>
         <?php } ?>
     <?php } ?>
 

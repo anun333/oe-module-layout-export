@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1 (2026-10-20)
+
+- **Fixed:** three compare labels read "the first file`s OpenEMR", "the file`s, then this site`s" and the like. OpenEMR's `xl()` turns an apostrophe into a backtick, so they're reworded, and a test now fails on any translated string with an apostrophe or quote mark.
+- `tools/footprint.php` refuses web requests: Composer installs the package under OpenEMR's web root.
+
 ## 0.1.0 (2026-10-20)
 
 First release. It only reads: it changes nothing in OpenEMR.
