@@ -1,0 +1,12 @@
+# Changelog
+
+## 0.1.0 (2026-10-20)
+
+First release. It only reads: it changes nothing in OpenEMR.
+
+- **Export** of chosen layouts and lists, as one JSON file or a zip with one file per layout and list, optionally with the lists the layouts use. Every column of the three tables, in a fixed order with no export time, so two exports of an unchanged site are byte-identical.
+- **Compare** of a file with the site, or of two files: layouts, lists, form and group properties, fields and options added, removed or changed column by column; fields whose table column the site lacks; lists no side has; field types the site doesn't know; table columns only one version has (listed, not counted as a difference).
+- **Files from the old Backup page** (removed in OpenEMR 8.3.0) read as data, never run. Only the statements the page wrote are accepted; anything else refuses the file.
+- Where a field is saved follows OpenEMR's own saves: `em_` fields in `employer_data`, list types 52 and 54 to 56 in tables of their own.
+- The page and the download need `admin/super`, as OpenEMR's layout and list editors do. Each export and compare is in the audit log.
+- Checked on OpenEMR 8.4.1 end to end, and on fresh 7.0.3 and 8.5.0 installs.
