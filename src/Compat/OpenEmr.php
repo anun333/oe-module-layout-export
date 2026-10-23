@@ -1,17 +1,10 @@
 <?php
 
 /**
- * The OpenEMR calls Layout Export makes that changed between releases, made once here so the
- * module runs on 7.0.x as well as 8.x. Each uses the newer interface when the running OpenEMR
- * has it and the 7.0 way otherwise:
- *
- *   settings and web root   OEGlobalsBag (8.0+)               or $GLOBALS
- *   the session             SessionWrapperFactory (8.0+)      or $_SESSION
- *   CSRF tokens             CsrfUtils with a session argument  or without one (7.0)
- *   access denied           AccessDeniedHelper (8.1+)          or a plain 403 page
- *   the audit log           EventAuditLogger::getInstance()    or ::instance() (7.0's Singleton trait)
- *
- * Measured against the v7_0_3 and v8_0_0 tags and the official 7.0.3 and 8.x images (2026-10-16).
+ * The OpenEMR calls Layout Export makes that changed between releases. The shared ones are
+ * openhealthcare-common's OpenEmr, one copy for every module (7.0.x to 8.x: settings, session, CSRF,
+ * access denied, audit log); this class keeps the names Layout Export's code calls, and the calls only
+ * Layout Export makes.
  *
  * @package   OpenHealthcare\LayoutExport
  * @license   https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License 3
@@ -22,119 +15,70 @@ declare(strict_types=1);
 namespace OpenHealthcare\LayoutExport\Compat;
 
 use OpenEMR\Common\Acl\AclMain;
-use OpenEMR\Common\Database\QueryUtils;
-use OpenEMR\Common\Csrf\CsrfUtils;
-use OpenEMR\Common\Logging\EventAuditLogger;
+use OpenHealthcare\Common\OpenEmr as Common;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 final class OpenEmr
 {
-    private const GLOBALS_BAG = 'OpenEMR\\Core\\OEGlobalsBag';
-    private const SESSION_FACTORY = 'OpenEMR\\Common\\Session\\SessionWrapperFactory';
-    private const ACCESS_DENIED = 'OpenEMR\\Common\\Acl\\AccessDeniedHelper';
-
     /** A string setting, such as OE_SITE_DIR. */
     public static function setting(string $name): string
     {
-        if (class_exists(self::GLOBALS_BAG)) {
-            return (string)self::GLOBALS_BAG::getInstance()->getString($name);
-        }
-        $value = $GLOBALS[$name] ?? '';
-        return is_scalar($value) ? (string)$value : '';
+        return Common::setting($name);
     }
 
     public static function siteDir(): string
     {
-        return self::setting('OE_SITE_DIR');
+        return Common::siteDir();
     }
 
     public static function webRoot(): string
     {
-        return class_exists(self::GLOBALS_BAG) ? (string)self::GLOBALS_BAG::getInstance()->getWebRoot() : self::setting('webroot');
+        return Common::webRoot();
     }
 
     public static function projectDir(): string
     {
-        return class_exists(self::GLOBALS_BAG) ? (string)self::GLOBALS_BAG::getInstance()->getProjectDir() : self::setting('fileroot');
+        return Common::projectDir();
     }
 
-    /** The event dispatcher, for subscribing to OpenEMR's events (the menu). */
+    /** The event dispatcher, for subscribing to OpenEMR's events. */
     public static function eventDispatcher(): EventDispatcherInterface
     {
-        $kernel = class_exists(self::GLOBALS_BAG) ? self::GLOBALS_BAG::getInstance()->getKernel() : ($GLOBALS['kernel'] ?? null);
-        $dispatcher = is_object($kernel) && method_exists($kernel, 'getEventDispatcher') ? $kernel->getEventDispatcher() : null;
-        if (!$dispatcher instanceof EventDispatcherInterface) {
-            throw new \RuntimeException('OpenEMR kernel not available');
-        }
-        return $dispatcher;
+        return Common::eventDispatcher();
     }
 
     /** A value from the logged-in user's session: pid, authUser, authProvider, authUserID. */
     public static function session(string $key): mixed
     {
-        $session = self::sessionObject();
-        if ($session !== null) {
-            return $session->get($key);
-        }
-        return $_SESSION[$key] ?? null;
+        return Common::session($key);
     }
 
     public static function csrfToken(): string
     {
-        $session = self::sessionObject();
-        return $session !== null && self::takesSession('collectCsrfToken')
-            ? (string)CsrfUtils::collectCsrfToken(session: $session)
-            : (string)CsrfUtils::collectCsrfToken();
+        return Common::csrfToken();
     }
 
     /** Ends the request (OpenEMR's own CSRF failure page) unless the posted token is valid. */
     public static function requireCsrf(mixed $token): void
     {
-        $token = is_string($token) ? $token : '';
-        $session = self::sessionObject();
-        $valid = $session !== null && self::takesSession('verifyCsrfToken')
-            ? CsrfUtils::verifyCsrfToken($token, session: $session)
-            : CsrfUtils::verifyCsrfToken($token);
-        if (!$valid) {
-            // 8.x answers 403; 7.0 prints the same refusal with 200. Make it 403 everywhere.
-            if (!headers_sent()) {
-                http_response_code(403);
-            }
-            CsrfUtils::csrfNotVerified();
-            exit;
-        }
+        Common::requireCsrf($token);
     }
 
     /** Ends the request with OpenEMR's access-denied page, or a plain 403 on releases without one. */
     public static function deny(string $logMessage, string $title): never
     {
-        if (class_exists(self::ACCESS_DENIED)) {
-            self::ACCESS_DENIED::denyWithTemplate($logMessage, $title);
-            exit;
-        }
-        error_log('Layout Export: ' . $logMessage);
-        http_response_code(403);
-        header('Content-Type: text/html; charset=utf-8');
-        echo '<!DOCTYPE html><html><head><title>' . htmlspecialchars($title, ENT_QUOTES) . '</title></head><body><h1>'
-            . htmlspecialchars(xl('Not authorized'), ENT_QUOTES) . '</h1></body></html>';
-        exit;
+        Common::deny($logMessage, $title, 'Layout Export');
     }
 
-    /** Whether the logged-in user is an administrator: the check OpenEMR's layout and list editors make. */
+    /** The permission check stays here, literal, so the footprint (tools/footprint.php) reads it from the module. */
     public static function isAdministrator(): bool
     {
         return (bool)AclMain::aclCheckCore('admin', 'super');
     }
 
-    /** The running OpenEMR's version, such as 8.4.1, from the version globals OpenEMR sets. */
     public static function version(): string
     {
-        $v = self::setting('openemr_version');
-        if ($v !== '') {
-            return $v;
-        }
-        $row = QueryUtils::fetchRecords('SELECT `v_major`, `v_minor`, `v_patch` FROM `version` LIMIT 1')[0] ?? null;
-        return $row === null ? '' : $row['v_major'] . '.' . $row['v_minor'] . '.' . $row['v_patch'];
+        return Common::version();
     }
 
     /**
@@ -156,25 +100,6 @@ final class OpenEmr
     /** Writes an event to OpenEMR's audit log as the logged-in user. */
     public static function audit(string $event, string $comment, int $pid = 0): void
     {
-        $logger = method_exists(EventAuditLogger::class, 'getInstance') ? EventAuditLogger::getInstance() : EventAuditLogger::instance();
-        $logger->newEvent($event, (string)self::session('authUser'), (string)self::session('authProvider'), 1, $comment, $pid);
-    }
-
-    private static function sessionObject(): ?object
-    {
-        if (!class_exists(self::SESSION_FACTORY)) {
-            return null;
-        }
-        return self::SESSION_FACTORY::getInstance()->getActiveSession();
-    }
-
-    private static function takesSession(string $method): bool
-    {
-        foreach ((new \ReflectionMethod(CsrfUtils::class, $method))->getParameters() as $parameter) {
-            if ($parameter->getName() === 'session') {
-                return true;
-            }
-        }
-        return false;
+        Common::audit($event, $comment, $pid);
     }
 }

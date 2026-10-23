@@ -68,7 +68,7 @@ Planned for 0.2.0, behind a setting that is off by default:
 composer require anun333/oe-module-layout-export
 ```
 
-Then in OpenEMR, Modules › Manage Modules: Register, Install and Enable **Layout Export**. It has no tables and no install SQL.
+Then in OpenEMR, Modules › Manage Modules: Register, Install and Enable **Layout Export**. It has no tables and no install SQL. It brings [openhealthcare-common](https://github.com/anun333/openhealthcare-common), the small library of OpenEMR compatibility code the openhealthcare modules share; Composer installs it alongside.
 
 ## Compatibility
 

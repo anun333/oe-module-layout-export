@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.3 (unreleased)
+
+- **Shared code:** the OpenEMR compatibility layer (settings, paths, the event dispatcher, CSRF, the refusal page, the audit log) now comes from [openhealthcare-common](https://github.com/anun333/openhealthcare-common) 1.x, which the openhealthcare modules share, instead of a copy in `src/Compat/`. Composer installs it with the module. The module does the same things as before, and its permission checks stay in its own code. Its read of the `version` table moved with it, and FOOTPRINT.md now lists it under the library's path. FOOTPRINT.md reads the library methods the module calls, as part of the module.
+- The bootstrap registers the library's namespace before looking for it, since Composer remembers a class it once failed to find. Without the library the module stays off instead of stopping OpenEMR.
+
 ## 0.1.2 (2026-10-22)
 
 - **Fixed: a Backup SQL file from MariaDB 12 wasn't read.** MariaDB 12's `mariadb-dump` wraps each table's rows in `SET @@AUTOCOMMIT=0 ... COMMIT`, and the reader refused the `COMMIT` as a statement backup.php never wrote. Transaction control (`COMMIT`, `BEGIN`, `START TRANSACTION`) is now passed over like the dump's `SET` lines; the reader still runs nothing. Found by the nightly check on OpenEMR master, whose stack runs MariaDB 12.3; a test reads that dump.
