@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2 (unreleased)
+
+- **Fixed: a Backup SQL file from MariaDB 12 wasn't read.** MariaDB 12's `mariadb-dump` wraps each table's rows in `SET @@AUTOCOMMIT=0 ... COMMIT`, and the reader refused the `COMMIT` as a statement backup.php never wrote. Transaction control (`COMMIT`, `BEGIN`, `START TRANSACTION`) is now passed over like the dump's `SET` lines; the reader still runs nothing. Found by the nightly check on OpenEMR master, whose stack runs MariaDB 12.3; a test reads that dump.
+
 ## 0.1.1 (2026-10-20)
 
 - **Fixed:** three compare labels read "the first file`s OpenEMR", "the file`s, then this site`s" and the like. OpenEMR's `xl()` turns an apostrophe into a backtick, so they're reworded, and a test now fails on any translated string with an apostrophe or quote mark.

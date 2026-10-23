@@ -65,9 +65,9 @@ As written in the source; whether they behave correctly for a given user is not 
 
 | part | files | lines |
 |---|---|---|
-| PHP logic (`src/`) | 10 | 1242 |
+| PHP logic (`src/`) | 10 | 1246 |
 | tools (`tools/`) | 1 | 582 |
-| tests (`tests/`, `phpunit.xml.dist`) | 8 | 456 |
+| tests (`tests/`, `phpunit.xml.dist`) | 9 | 549 |
 | pages (`public/`) | 2 | 240 |
 | module wiring | 5 | 148 |
 

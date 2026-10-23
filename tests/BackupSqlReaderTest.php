@@ -27,6 +27,18 @@ final class BackupSqlReaderTest extends TestCase
         $this->assertNull($s->lists['risklevel']['options'][0]['notes'], 'NULL is read as null');
     }
 
+    public function testAFileFromMariaDb12sDumpIsReadToo(): void
+    {
+        // The same layout and list dumped by MariaDB 12.3's mariadb-dump on OpenEMR master (2026-10-22), which wraps
+        // each table's rows in SET @@AUTOCOMMIT=0 ... COMMIT. Transaction control changes nothing a reader keeps.
+        $sql = (string)file_get_contents(__DIR__ . '/fixtures/backup-php-LBTref-mariadb12.sql');
+        $this->assertStringContainsString("\nCOMMIT;\n", $sql, 'the fixture has the statement this is about');
+        $s = BackupSqlReader::read($sql);
+        $this->assertSame(['LBTref'], array_keys($s->layouts));
+        $this->assertNotSame([], $s->layouts['LBTref']['fields']);
+        $this->assertSame(['low', 'medium', 'high'], array_column($s->lists['risklevel']['options'], 'option_id'));
+    }
+
     public function testValuesAreReadWithMysqlsEscapes(): void
     {
         $sql = "INSERT INTO `list_options` (`list_id`, `option_id`, `title`, `notes`, `seq`) VALUES ('x','o1','O\\'Brien \"Jr\"','line\\nnext',-2);\n"

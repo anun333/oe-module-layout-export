@@ -41,6 +41,10 @@ final class BackupSqlReader
             if (preg_match('/^(LOCK TABLES\s+' . self::IDENT . '\s+WRITE|UNLOCK TABLES)$/i', $s) === 1) {
                 continue;
             }
+            // Transaction control: MariaDB 12's mariadb-dump wraps each table's rows in SET @@AUTOCOMMIT=0 ... COMMIT.
+            if (preg_match('/^(COMMIT|BEGIN|START TRANSACTION)$/i', $s) === 1) {
+                continue;
+            }
             // backup.php's repair for DEM and HIS layouts: build ALTER TABLE ... ADD for missing columns, then run it.
             if (preg_match("/^SELECT CONCAT\\(\\s*'ALTER TABLE (patient_data|history_data) '.*INTO @sql$/is", $s) === 1
                 || preg_match('/^PREPARE stmt FROM @sql$/i', $s) === 1 || preg_match('/^EXECUTE stmt$/i', $s) === 1) {
