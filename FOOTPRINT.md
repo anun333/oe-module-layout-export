@@ -68,7 +68,7 @@ As written in the source; whether they behave correctly for a given user is not 
 | PHP logic (`src/`) | 10 | 1171 |
 | tools (`tools/`) | 1 | 641 |
 | tests (`tests/`, `phpunit.xml.dist`) | 9 | 527 |
-| pages (`public/`) | 2 | 240 |
+| pages (`public/`) | 2 | 242 |
 | module wiring | 5 | 161 |
 
 ## Not covered here

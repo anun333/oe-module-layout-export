@@ -94,10 +94,12 @@ $token = OpenEmr::csrfToken();
 $base = OpenEmr::webRoot() . Bootstrap::MODULE_INSTALLATION_PATH . '/public/';
 ?>
 <!DOCTYPE html>
-<html>
+<?php // The module's own text is written in English. ?>
+<html lang="en">
 <head>
     <title><?php echo xlt('Layout Export'); ?></title>
     <?php Header::setupHeader(); ?>
+    <style>/* Bootstrap's code colour is 3.7:1 on these backgrounds; this one is over 5.6:1 (WCAG 1.4.3). */ code { color: #b5175b; }</style>
 </head>
 <body class="body_top">
 <div class="container-fluid py-3">
