@@ -23,7 +23,7 @@
         "ext-zip": "*",
         "ext-zlib": "*",
         "openemr/oe-module-installer-plugin": "^0.1.5",
-        "anun333/openhealthcare-common": "^1.0"
+        "anun333/openhealthcare-common": "^1.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^11.5"
@@ -49,5 +49,13 @@
     "support": {
         "issues": "https://github.com/anun333/oe-module-layout-export/issues",
         "source": "https://github.com/anun333/oe-module-layout-export"
+    },
+    "extra": {
+        "openhealthcare": {
+            "footprint-not-covered": [
+                "Whether the permission check above behaves correctly for a user without `admin / super`. The end-to-end check refuses a clinician the page and the download; the README's \"Who can open what\" section describes it.",
+                "Whether exports and compares are right. The unit tests in `tests/` cover the file readers, the export format and the compare; the end-to-end check against a running OpenEMR is described in the README."
+            ]
+        }
     }
 }
