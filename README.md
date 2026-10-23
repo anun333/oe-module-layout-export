@@ -4,7 +4,7 @@ Exports OpenEMR's layout-based forms and lists to files you can keep in version 
 
 OpenEMR 8.3.0 removed the Backup page (openemr/openemr#13471), and with it the export of layouts and lists that some sites relied on to version-control their forms and undo changes (openemr/openemr#11905). This module does that part again, inside OpenEMR, for OpenEMR 7.0 and later. It also reads the SQL files the old page wrote, as data, without running them, so backups made before the page went can still be compared.
 
-> **Status: 0.1.1, a pre-release.** Tested with synthetic data on OpenEMR 8.4.1, 7.0.3 and 8.5.0 (see [Compatibility](#compatibility)). This version only reads: it changes nothing in OpenEMR. Importing a file is planned for 0.2.0.
+> **Status: 0.1.2, a pre-release.** Tested with synthetic data on OpenEMR 8.4.1, 7.0.3 and 8.5.0 (see [Compatibility](#compatibility)). This version only reads: it changes nothing in OpenEMR. Importing a file is planned for 0.2.0.
 
 What installing it changes in your database (nothing), what it reads, and what it hooks into are listed in [FOOTPRINT.md](FOOTPRINT.md), generated from the source.
 

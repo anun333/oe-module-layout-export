@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.2 (unreleased)
+## 0.1.2 (2026-10-22)
 
 - **Fixed: a Backup SQL file from MariaDB 12 wasn't read.** MariaDB 12's `mariadb-dump` wraps each table's rows in `SET @@AUTOCOMMIT=0 ... COMMIT`, and the reader refused the `COMMIT` as a statement backup.php never wrote. Transaction control (`COMMIT`, `BEGIN`, `START TRANSACTION`) is now passed over like the dump's `SET` lines; the reader still runs nothing. Found by the nightly check on OpenEMR master, whose stack runs MariaDB 12.3; a test reads that dump.
 
