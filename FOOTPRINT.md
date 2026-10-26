@@ -53,6 +53,7 @@ As written in the source; whether they behave correctly for a given user is not 
 ## Settings it reads
 
 - `OE_SITE_DIR` (`vendor/anun333/openhealthcare-common/src/OpenEmr.php`)
+- `css_header` (`src/Contrast.php`)
 - `openemr_version` (`vendor/anun333/openhealthcare-common/src/OpenEmr.php`)
 - `webroot` (`public/index.php`)
 
@@ -72,9 +73,9 @@ As written in the source; whether they behave correctly for a given user is not 
 
 | part | files | lines |
 |---|---|---|
-| PHP logic (`src/`) | 10 | 1171 |
-| tests (`tests/`, `phpunit.xml.dist`) | 9 | 527 |
-| pages (`public/`) | 2 | 242 |
+| PHP logic (`src/`) | 11 | 1221 |
+| tests (`tests/`, `phpunit.xml.dist`) | 10 | 574 |
+| pages (`public/`) | 2 | 243 |
 | module wiring | 5 | 170 |
 | tools (`tools/`) | 1 | 31 |
 
