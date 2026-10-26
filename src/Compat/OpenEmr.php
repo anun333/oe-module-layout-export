@@ -56,13 +56,25 @@ final class OpenEmr
     /** The page's language, as a BCP 47 tag: the signed-in user's OpenEMR language, or en. */
     public static function pageLang(): string
     {
-        return Common::pageLang();
+        return self::fromLibrary('pageLang', 'en');
     }
 
     /** The page's direction for that language: ltr or rtl. */
     public static function pageDir(): string
     {
-        return Common::pageDir();
+        return self::fromLibrary('pageDir', 'ltr');
+    }
+
+    /**
+     * The library's answer, or the fallback when the copy that loaded has no such method: on a site
+     * that copies modules in by hand, the first module's copy serves every module, and one older than
+     * 1.4.0 has no pageLang(). The pages then say English, as they did before, rather than stop.
+     *
+     * @param class-string $library
+     */
+    public static function fromLibrary(string $method, string $fallback, string $library = Common::class): string
+    {
+        return method_exists($library, $method) ? (string)$library::$method() : $fallback;
     }
 
     public static function csrfToken(): string
