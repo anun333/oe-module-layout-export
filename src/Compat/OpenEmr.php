@@ -53,6 +53,18 @@ final class OpenEmr
         return Common::session($key);
     }
 
+    /** The page's language, as a BCP 47 tag: the signed-in user's OpenEMR language, or en. */
+    public static function pageLang(): string
+    {
+        return Common::pageLang();
+    }
+
+    /** The page's direction for that language: ltr or rtl. */
+    public static function pageDir(): string
+    {
+        return Common::pageDir();
+    }
+
     public static function csrfToken(): string
     {
         return Common::csrfToken();

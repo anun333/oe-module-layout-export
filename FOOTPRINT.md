@@ -73,7 +73,7 @@ As written in the source; whether they behave correctly for a given user is not 
 
 | part | files | lines |
 |---|---|---|
-| PHP logic (`src/`) | 11 | 1221 |
+| PHP logic (`src/`) | 11 | 1233 |
 | tests (`tests/`, `phpunit.xml.dist`) | 10 | 574 |
 | pages (`public/`) | 2 | 243 |
 | module wiring | 5 | 170 |
