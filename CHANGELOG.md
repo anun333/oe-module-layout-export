@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.8 (unreleased)
+## 0.1.8 (2026-10-27)
 
 - **The export's "Also export the lists the chosen layouts use" box and the format choice are easier to hit.** The box sat so close to the format buttons below it that the two 13-pixel targets were less than 24 pixels apart; there is now room between them (WCAG 2.2, 2.5.8 Target Size).
 
