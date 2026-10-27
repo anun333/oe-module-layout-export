@@ -162,7 +162,7 @@ $base = OpenEmr::webRoot() . Bootstrap::MODULE_INSTALLATION_PATH . '/public/';
                 </div>
             </div>
         </div>
-        <div class="form-check mt-2"><input class="form-check-input" type="checkbox" name="with_used_lists" value="1" id="with_used_lists" checked>
+        <div class="form-check mt-2 mb-2"><input class="form-check-input" type="checkbox" name="with_used_lists" value="1" id="with_used_lists" checked>
             <label class="form-check-label small" for="with_used_lists"><?php echo xlt('Also export the lists the chosen layouts use'); ?></label></div>
         <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="format" value="json" id="f-json" checked>
             <label class="form-check-label small" for="f-json"><?php echo xlt('One JSON file'); ?></label></div>

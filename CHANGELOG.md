@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.8 (unreleased)
+
+- **The export's "Also export the lists the chosen layouts use" box and the format choice are easier to hit.** The box sat so close to the format buttons below it that the two 13-pixel targets were less than 24 pixels apart; there is now room between them (WCAG 2.2, 2.5.8 Target Size).
+
 ## 0.1.7 (2026-10-26)
 
 - **Core stock fields: see what deleting a field would cost, before you delete it.** OpenEMR's Layout Editor drops a Demographics or History field's table column when the field is deleted and the column is empty and not on its short protected list, and OpenEMR code that reads that column by name fails later, as on a new visit after Referring Provider was deleted (core issue #14742). A new page, **Check core stock fields** at the top of the module's page, compares the site with the stock schema of the OpenEMR it runs (its own `sql/database.sql`) and the protected list in its own `edit_layout.php`, and lists stock columns already gone, with the statement that puts each back with its stock definition; stock fields the editor would drop the column of if deleted now; and stock fields not on the layout. It reads only, and says so when the OpenEMR has no `sql/database.sql` rather than reporting all clear.
