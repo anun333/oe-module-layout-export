@@ -1,0 +1,66 @@
+<?php
+// isColumnReserved() from interface/super/edit_layout.php at 644903b86d, for tests.
+// This tells you if a column name is required in code and therefore must not
+// be deleted or renamed.
+function isColumnReserved($tablename, $field_id): bool
+{
+    if ($tablename == 'patient_data') {
+        if (
+            in_array($field_id, [
+            'id',
+            'DOB',
+            'title',
+            'language',
+            'fname',
+            'lname',
+            'mname',
+            'street',
+            'postal_code',
+            'city',
+            'state',
+            'ss',
+            'phone_home',
+            'phone_cell',
+            'date',
+            'sex',
+            'providerID',
+            'email',
+            'pubpid',
+            'pid',
+            'squad',
+            'home_facility',
+            'deceased_date',
+            'deceased_reason',
+            'allow_patient_portal',
+            'soap_import_status',
+            'email_direct',
+            'dupscore',
+            'cmsportal_login',
+            'care_team_provider',
+            'care_team_status',
+            'billing_note',
+            'uuid',
+            'care_team_facility',
+            'name_history',
+            'care_team_status',
+            'patient_groups',
+            'additional_addresses',
+            'telecoms',
+            'related_persons'
+            ])
+        ) {
+            return true;
+        }
+    } elseif ($tablename == 'history_data') {
+        if (
+            in_array($field_id, [
+            'id',
+            'date',
+            'pid',
+            ])
+        ) {
+            return true;
+        }
+    }
+    return false;
+}

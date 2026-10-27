@@ -105,6 +105,10 @@ $base = OpenEmr::webRoot() . Bootstrap::MODULE_INSTALLATION_PATH . '/public/';
 <body class="body_top">
 <div class="container-fluid py-3">
     <h1 class="h4"><?php echo xlt('Layout Export'); ?></h1>
+    <p class="small">
+        <a href="<?php echo attr($base . 'stock.php'); ?>" id="stock-link"><?php echo xlt('Check core stock fields'); ?></a> ·
+        <a href="<?php echo attr(\OpenHealthcare\LayoutExport\Guide::url()); ?>" target="_blank" rel="noopener"><?php echo xlt('Help'); ?></a>
+    </p>
     <p class="small text-muted"><?php echo xlt('Export layout forms and lists to a file you can keep in version control, and compare a file with this site or with another file. It reads the SQL files the old Backup page wrote too, as data, without running them. This version changes nothing in OpenEMR.'); ?></p>
     <?php foreach ($errors as $e) { ?><div class="alert alert-danger py-2"><?php echo text($e); ?></div><?php } ?>
 

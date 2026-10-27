@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.7 (unreleased)
+
+- **Core stock fields: see what deleting a field would cost, before you delete it.** OpenEMR's Layout Editor drops a Demographics or History field's table column when the field is deleted and the column is empty and not on its short protected list, and OpenEMR code that reads that column by name fails later, as on a new visit after Referring Provider was deleted (core issue #14742). A new page, **Check core stock fields** at the top of the module's page, compares the site with the stock schema of the OpenEMR it runs (its own `sql/database.sql`) and the protected list in its own `edit_layout.php`, and lists stock columns already gone, with the statement that puts each back with its stock definition; stock fields the editor would drop the column of if deleted now; and stock fields not on the layout. It reads only, and says so when the OpenEMR has no `sql/database.sql` rather than reporting all clear.
+- **A guide**, GUIDE.md, task by task, opened by **Help** on each page at the installed version's tag.
+- **Install note:** restart the container after adding, upgrading or removing a module copied in by hand (OpenEMR's official 8.0.0 to 8.5.0 images keep class locations, and classes not found, in APCu).
+
 ## 0.1.6 (2026-10-26)
 
 - **Pages are announced in your language.** Each page now declares the signed-in user's OpenEMR language and its direction instead of English, so a screen reader reads the translated text in that language. It comes from openhealthcare-common 1.4.0, which this version requires. If another module's older copy of the library loads first on a site that installs by hand, the pages say English, as before, rather than stop.

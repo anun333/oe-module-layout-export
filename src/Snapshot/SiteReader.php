@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace OpenHealthcare\LayoutExport\Snapshot;
 
 use OpenEMR\Common\Database\QueryUtils;
+use OpenHealthcare\LayoutExport\Stock\StockSchema;
 
 final class SiteReader
 {
@@ -103,6 +104,70 @@ final class SiteReader
             throw new \InvalidArgumentException("Not a table this module reads: $table");
         }
         return array_map(static fn(array $r): string => (string)$r['Field'], QueryUtils::fetchRecords("SHOW COLUMNS FROM `$table`"));
+    }
+
+    /**
+     * The field ids on each of the given layouts.
+     *
+     * @param list<string> $formIds
+     * @return array<string, list<string>> form id => field ids
+     */
+    public function layoutFields(array $formIds): array
+    {
+        $out = array_fill_keys($formIds, []);
+        if ($formIds === []) {
+            return $out;
+        }
+        foreach (QueryUtils::fetchRecords(
+            'SELECT `form_id`, `field_id` FROM `layout_options` WHERE `form_id` IN (' . implode(', ', array_fill(0, count($formIds), '?')) . ')',
+            $formIds
+        ) as $r) {
+            $out[(string)$r['form_id']][] = (string)$r['field_id'];
+        }
+        return $out;
+    }
+
+    /**
+     * A table's column names from information_schema; none when the table isn't there (the IPPF tables, on most sites).
+     *
+     * @return list<string>
+     */
+    public function tableColumns(string $table): array
+    {
+        if (!in_array($table, StockSchema::TABLES, true)) {
+            throw new \InvalidArgumentException("Not a table this module reads: $table");
+        }
+        return array_map(static fn(array $r): string => (string)$r['COLUMN_NAME'], QueryUtils::fetchRecords(
+            'SELECT `COLUMN_NAME` FROM information_schema.COLUMNS WHERE `TABLE_SCHEMA` = DATABASE() AND `TABLE_NAME` = ? ORDER BY `ORDINAL_POSITION`',
+            [$table]
+        ));
+    }
+
+    /**
+     * The columns with no value by the Layout Editor's own test before it drops one (no row where the column IS NOT
+     * NULL AND != ''), all read in one pass over the table.
+     *
+     * @param list<string> $columns
+     * @return list<string>
+     */
+    public function emptyColumns(string $table, array $columns): array
+    {
+        if (!in_array($table, StockSchema::TABLES, true)) {
+            throw new \InvalidArgumentException("Not a table this module reads: $table");
+        }
+        $columns = array_values(array_filter($columns, static fn(string $c): bool => preg_match('/^[A-Za-z0-9_]+$/', $c) === 1));
+        if ($columns === []) {
+            return [];
+        }
+        $select = implode(', ', array_map(static fn(int $i, string $c): string => "MAX(CASE WHEN `$c` IS NOT NULL AND `$c` != '' THEN 1 ELSE 0 END) AS `v$i`", array_keys($columns), $columns));
+        $row = QueryUtils::fetchRecords("SELECT $select FROM `$table`")[0] ?? [];
+        $out = [];
+        foreach ($columns as $i => $c) {
+            if ((int)($row["v$i"] ?? 0) === 0) {
+                $out[] = $c;
+            }
+        }
+        return $out;
     }
 
     /**

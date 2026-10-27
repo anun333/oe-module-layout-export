@@ -29,6 +29,7 @@ What installing it changes in your database (nothing), what it reads, and what i
   - table columns one OpenEMR version has and the other doesn't. These are listed but don't count as a difference.
 
   `list_options.last_updated`, which OpenEMR sets on every edit, isn't compared.
+- **Core stock fields:** before you delete a Demographics or History field, see what core issue [#14742](https://github.com/openemr/openemr/issues/14742) can cost. OpenEMR's Layout Editor drops a deleted field's table column when it's empty and not on edit_layout.php's short protected list, and core code that reads the column by name fails later ("Unknown column 'ref_providerID'" on a new visit). The page compares the site with the stock schema of the OpenEMR it runs, read from its own `sql/database.sql`, and the protected list from its own `edit_layout.php`, and lists stock columns that are gone (with the `ALTER TABLE ... ADD COLUMN` that restores each with its stock definition, for an administrator to run), stock fields whose column the editor would drop if deleted now, and stock fields not on the layout. It reads only.
 
 ### Files from the old Backup page
 
@@ -71,6 +72,8 @@ composer require anun333/oe-module-layout-export
 Then in OpenEMR, Modules › Manage Modules: Register, Install and Enable **Layout Export**. It has no tables and no install SQL. It brings [openhealthcare-common](https://github.com/anun333/openhealthcare-common), the small library of OpenEMR compatibility code the openhealthcare modules share; Composer installs it alongside.
 
 **Manual installs:** if you copy modules in by hand rather than through Composer, every module's own `vendor/` must hold the same version of openhealthcare-common. OpenEMR loads the library once, from the first module that registers it, so an older copy in one module is what every module gets.
+
+**After adding, upgrading or removing a module copied in by hand, restart the container (or Apache).** OpenEMR's official Docker images (8.0.0 to 8.5.0) keep in APCu which file holds each class, and each class they didn't find, across requests: until a restart, a class once not found stays not found, and a removed module's classes still point at its folder. An OpenEMR built from source without Composer's `--apcu-autoloader` has no such cache.
 
 ## Compatibility
 
