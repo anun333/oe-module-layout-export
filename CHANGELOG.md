@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.9 (unreleased)
+## 0.1.9 (2026-10-28)
 
 - **README:** links OpenEMR's own guide to exporting and importing layouts and lists by hand (openemr/openemr#14522, merged 2026-10-28).
 
